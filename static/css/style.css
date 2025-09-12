@@ -316,3 +316,57 @@ th {
 .bg-light {
     background-color: transparent !important;
 }
+
+/* --- Page Layout --- */
+.page-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--dark-surface);
+    border-right: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+/* --- Sidebar Navigation --- */
+.sidebar .nav-link {
+    color: var(--muted-text);
+    font-weight: 500;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    transition: color .15s ease-in-out;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    color: var(--primary-accent);
+}
+
+.sidebar .dropdown-menu {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--border-color);
+}
+
+.sidebar .dropdown-item {
+    color: var(--muted-text);
+    transition: background-color .15s ease-in-out, color .15s ease-in-out;
+}
+
+.sidebar .dropdown-item:hover {
+    color: var(--light-text);
+    background-color: var(--dark-surface);
+}
