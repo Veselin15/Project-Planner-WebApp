@@ -1,4 +1,14 @@
 {% extends "common/base.html" %}
 
+{% block title %}Project Manager{% endblock %}
 
-{% block title %}Food Search - Calories Tracker{% endblock %}
+{% block content %}
+    {% if project %}
+        {% include 'project_view.html' %}
+    {% else %}
+        <div class="text-center">
+            <h1>Welcome to the Project Manager</h1>
+            <p>Select a project to get started.</p>
+        </div>
+    {% endif %}
+{% endblock %}
