@@ -1,15 +1,54 @@
-{% extends "common/base.html" %}
+{% extends 'common/base.html' %}
 
-{% block title %}Project Manager{% endblock %}
+{% block title %}Your Projects{% endblock %}
 
 {% block content %}
-    {% if project %}
+    <div class="container-fluid py-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">Your Projects</h2>
+                    <a href="{% url 'create_project' %}" class="btn btn-primary">New Project</a>
+                </div>
 
-        {% include 'project_view.html' %}
-    {% else %}
-        <div class="text-center">
-            <h1>Welcome to the Project Manager</h1>
-            <p>Select a project to get started.</p>
+                {% if projects %}
+                    <div class="row g-3">
+                        {% for project in projects %}
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <div class="card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title mb-1">{{ project.name }}</h5>
+                                        <p class="text-muted small mb-2">
+                                            Updated {{ project.updated_at|date:"M d, Y H:i" }}
+                                        </p>
+                                        <p class="card-text flex-grow-1">
+                                            {% if project.description %}
+                                                {{ project.description|truncatechars:140 }}
+                                            {% else %}
+                                                <span class="text-muted">No description</span>
+                                            {% endif %}
+                                        </p>
+                                        <div class="mt-auto">
+                                            <a href="{{ project.get_absolute_url }}"
+                                               class="btn btn-outline-primary w-100">
+                                                Open Project
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <h5 class="mb-2">No projects yet</h5>
+                            <p class="text-muted mb-3">Get started by creating your first project.</p>
+                            <a href="{% url 'create_project' %}" class="btn btn-primary">Create Project</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
