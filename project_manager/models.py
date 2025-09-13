@@ -21,6 +21,7 @@ class Project(models.Model):
         Update the reverse() target here if your URL name is different.
         """
         return reverse('project_detail', args=[self.pk])
+
 class Plan(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='plans')
     name = models.CharField(max_length=255)
