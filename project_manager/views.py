@@ -74,3 +74,4 @@ def plan_detail(request, project_id, plan_id):
         'plans': plans,
         'form': form,
     })
+
