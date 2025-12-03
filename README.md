@@ -1,113 +1,91 @@
-Project Planner WebApp
-A robust Django-based web application designed to help users manage projects and create detailed plans with rich text content. The application features a modern Dark UI, secure user authentication, and a structured database backend using PostgreSQL.
+# Project Planner WebApp
 
-🌟 Features
-User Authentication System: Secure Registration, Login, and Logout functionality using Django's built-in auth system extended with a custom User model.
+**Project Planner WebApp** is a robust Django-based web application designed to help users manage projects and create detailed plans with rich text content. The application features a modern Dark UI, secure user authentication, and a structured database backend using PostgreSQL.
 
-Project Management: Users can create, view, and organize multiple projects. Each project tracks a name, description, and modification timestamps.
+## 🌟 Features
 
-Detailed Planning: Inside each project, users can create specific "Plans".
+* **User Authentication System:**
+    * Secure Registration, Login, and Logout functionality.
+    * Custom User model integration.
+* **Project Management:**
+    * Create, view, and organize multiple projects.
+    * Each project tracks a name, description, and modification timestamps.
+    * Dashboard view listing all user projects.
+* **Detailed Planning:**
+    * Create specific "Plans" within each project.
+    * **Rich Text Editing:** Integrated **CKEditor** allows users to write detailed plans with formatting, lists, and image uploads.
+* **Modern UI/UX:**
+    * Custom-styled interface using **Bootstrap 5**.
+    * **Dark Mode** theme with vibrant orange and teal accents.
+    * Responsive design suitable for both mobile and desktop.
+    * Dynamic sidebar for quick navigation.
 
-Rich Text Editing: Integrated CKEditor allows users to write detailed plans with formatting, lists, and image uploads.
+## 🛠️ Tech Stack
 
-Modern Dark UI: A custom-styled interface using Bootstrap 5 and custom CSS variables for a consistent dark theme with orange/teal accents.
+* **Backend:** Python 3.12, Django 5.x
+* **Database:** PostgreSQL
+* **Frontend:** HTML5, CSS3, Bootstrap 5
+* **Utilities:**
+    * `django-ckeditor` & `django-ckeditor-uploader` (Rich Text)
+    * `django-widget-tweaks` (Form rendering)
+* **DevOps:** Docker & Docker Compose
 
-Responsive Design: Sidebar navigation and responsive layouts for mobile and desktop usage.
+## 🚀 Getting Started
 
-Dynamic Sidebar: Automatically lists the user's active projects for quick navigation.
+The project is configured to run seamlessly using **Docker**.
 
-🛠️ Tech Stack
-Backend: Python 3.12, Django 5.x
+### Prerequisites
+* [Docker Desktop](https://www.docker.com/products/docker-desktop) installed.
+* Git.
 
-Database: PostgreSQL
+### Installation Steps
 
-Containerization: Docker & Docker Compose
+1.  **Clone the repository:**
+    ```bash
+    git clone <YOUR_REPO_URL>
+    cd project-planner-webapp
+    ```
 
-Frontend: HTML5, Bootstrap 5, Custom CSS
+2.  **Build and Start the containers:**
+    Run the following command to build the images and start the services (Web & DB):
+    ```bash
+    docker-compose up --build
+    ```
+    *This starts the web server on port `8000` and the PostgreSQL database on port `5432`.*
 
-Utilities:
+3.  **Apply Database Migrations:**
+    Open a new terminal window and run:
+    ```bash
+    docker-compose exec web python manage.py migrate
+    ```
 
-django-ckeditor & django-ckeditor-uploader (Rich Text)
+4.  **Create a Superuser (Optional):**
+    To access the Django Admin panel:
+    ```bash
+    docker-compose exec web python manage.py createsuperuser
+    ```
 
-django-widget-tweaks (Form rendering)
+5.  **Access the Application:**
+    Open your browser and navigate to: [http://localhost:8000](http://localhost:8000)
 
-🚀 Getting Started
-Prerequisites
-Docker and Docker Compose installed on your machine.
+## 📂 Project Structure
 
-(Optional) Python 3.10+ if running locally without Docker.
+* `accounts/`: Handles user authentication (login, register, custom User model).
+* `project_manager/`: Core application containing logic for Projects and Plans (models, views, forms).
+* `templates/`: HTML templates (Base, Home, Project details, etc.).
+* `static/`: CSS styles (including custom dark theme) and static assets.
+* `media/`: Directory for user-uploaded content (via CKEditor).
+* `docker-compose.yml`: Docker services configuration.
 
-🐳 Run with Docker (Recommended)
-This project is configured to run seamlessly with Docker.
+## ⚙️ Environment Configuration
 
-Clone the repository:
+The project is set up for local development with the following default settings (found in `settings.py` and `docker-compose.yml`):
 
-Bash
+* **Debug:** `True`
+* **Database Name:** `project_manager_db`
+* **Database User:** `user`
+* **Database Password:** `password`
 
-git clone https://github.com/yourusername/project-planner.git
-cd project-planner
-Build and Start the containers:
+---
 
-Bash
-
-docker-compose up --build
-This will start the Django web server on port 8000 and the PostgreSQL database on port 5432.
-
-Apply Migrations: Open a new terminal window and run:
-
-Bash
-
-docker-compose exec web python manage.py migrate
-Create a Superuser (Admin):
-
-Bash
-
-docker-compose exec web python manage.py createsuperuser
-Access the App:
-
-Web App: http://localhost:8000
-
-Admin Panel: http://localhost:8000/admin
-
-🔧 Manual Local Installation
-If you prefer not to use Docker:
-
-Create a virtual environment:
-
-Bash
-
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-Install dependencies:
-
-Bash
-
-pip install -r requirements.txt
-Configure Database: Ensure you have a PostgreSQL database running. Update DATABASES in Project_Manager_WebApp/settings.py with your credentials.
-
-Run Migrations:
-
-Bash
-
-python manage.py migrate
-Run Server:
-
-Bash
-
-python manage.py runserver
-📂 Project Structure
-accounts/: Handles user registration, custom User model, and authentication logic.
-
-project_manager/: Core app containing logic for Projects and Plans models, views, and forms.
-
-templates/: Contains HTML templates (Base, Home, Login, Register, Project details).
-
-static/: CSS styles, images, and JavaScript files.
-
-uploads/: Directory for media files uploaded via CKEditor.
-
-📸 Screenshots
-(You can add screenshots of your application here, e.g., the Login screen, the Dashboard, and the Plan Editor).
-
-🛡️ License
-This project is free to use.
+**Developed by:** Veselin15
