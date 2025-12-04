@@ -42,6 +42,7 @@ The project is configured to run seamlessly using **Docker**.
 
 1.  **Clone the repository:**
     ```bash
+
     git clone <YOUR_REPO_URL>
     cd project-planner-webapp
     ```
