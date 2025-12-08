@@ -1,24 +1,30 @@
-version: '3.9'
+version: '3.8'
 
 services:
   db:
-    image: postgres
-    environment:
-      POSTGRES_DB: project_manager_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+    image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=project_manager_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
     ports:
-      - "5432:5432"
+      - "5432:5432" # Allows you to access the DB from your host machine if needed
 
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
+    environment:
+      # These match the values in the 'db' service above
+      - DB_HOST=db
+      - DB_NAME=project_manager_db
+      - DB_USER=user
+      - DB_PASSWORD=password
     depends_on:
       - db
 

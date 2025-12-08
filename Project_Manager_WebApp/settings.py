@@ -57,10 +57,11 @@ WSGI_APPLICATION = 'Project_Manager_WebApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'project_manager_db',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        # Use environment variables with your current values as defaults
+        'NAME': os.environ.get('DB_NAME', 'project_manager_db'),
+        'USER': os.environ.get('DB_USER', 'user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': 5432,
     }
 }

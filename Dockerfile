@@ -1,14 +1,29 @@
-FROM python:3.10
+# Use Python 3.12 to match your local environment
+FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-WORKDIR /code
+# Set work directory
+WORKDIR /app
 
-COPY requirements.txt /code/
+# Install system dependencies required for psycopg2 (Postgres driver)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . /code/
+# Copy project
+COPY . /app/
 
+# Expose the Django port
+EXPOSE 8000
+
+# Default command
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
