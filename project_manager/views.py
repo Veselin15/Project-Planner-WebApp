@@ -27,6 +27,7 @@ def create_project(request):
         form = ProjectForm()
     return render(request, 'project_manager/create_project.html', {'form': form})
 
+
 def project_detail(request, project_id):
     """
     Project detail page:
@@ -34,13 +35,19 @@ def project_detail(request, project_id):
     - Allows creating a new plan (name only)
     """
     project = get_object_or_404(Project, id=project_id, owner=request.user)
+
     if request.method == 'POST':
         plan_form = PlanForm(request.POST)
         if plan_form.is_valid():
             plan = plan_form.save(commit=False)
             plan.project = project
-            plan.save()
-            return redirect('plan_detail', project_id=project.id, plan_id=plan.id)
+
+            # FIX: Check if a plan with this name already exists in this project
+            if Plan.objects.filter(project=project, name=plan.name).exists():
+                plan_form.add_error('name', 'A plan with this name already exists in this project.')
+            else:
+                plan.save()
+                return redirect('plan_detail', project_id=project.id, plan_id=plan.id)
     else:
         plan_form = PlanForm()
 

@@ -1,9 +1,9 @@
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 User = get_user_model()
+
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -16,16 +16,16 @@ class Project(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        """
-        Expected URL name: 'project-detail' with pk argument.
-        Update the reverse() target here if your URL name is different.
-        """
         return reverse('project_detail', args=[self.pk])
+
 
 class Plan(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='plans')
     name = models.CharField(max_length=255)
-    content =  RichTextUploadingField(blank=True)
+
+    # CHANGED: Use JSONField to store Editor.js blocks
+    content = models.JSONField(default=dict, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

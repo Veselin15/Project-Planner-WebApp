@@ -3,79 +3,113 @@
 {% block title %}{{ project.name }} - {{ plan.name }}{% endblock %}
 
 {% block extra_head %}
-    {{ form.media }}
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+
+    <style>
+        /* Notion-like Styles */
+        .codex-editor__redactor { padding-bottom: 100px !important; }
+        .ce-block__content, .ce-toolbar__content { max-width: 800px; margin: 0 auto; }
+
+        /* Dark Theme Support */
+        [data-bs-theme="dark"] .ce-block__content { color: #e0e0e0; }
+        [data-bs-theme="dark"] .ce-popover,
+        [data-bs-theme="dark"] .ce-inline-toolbar { background: #2b3035; border: 1px solid #495057; }
+        [data-bs-theme="dark"] .ce-inline-tool:hover { background: #343a40; }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-3">
-            <li class="breadcrumb-item"><a href="{% url 'project_detail' project_id=project.id %}">{{ project.name }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ plan.name }}</li>
-        </ol>
-    </nav>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'project_detail' project.id %}" class="text-muted text-decoration-none">{{ project.name }}</a></li>
+                <li class="breadcrumb-item active">{{ plan.name }}</li>
+            </ol>
+        </nav>
+        <div>
+            <button id="saveBtn" class="btn btn-primary btn-sm rounded-pill px-4">Save</button>
+            <a href="{% url 'project_detail' project.id %}" class="btn btn-outline-secondary btn-sm rounded-pill ms-2">Back</a>
+        </div>
+    </div>
 
     <div class="row">
-        <!-- Editor -->
-        <div class="col-lg-9 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <strong>Edit Plan</strong>
-                </div>
-                <div class="card-body">
-                    <form method="post">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm border-0 bg-transparent">
+                <div class="card-body p-0">
+                    <form method="post" id="planForm">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+                        <div class="px-5 pt-4">
                             {{ form.name }}
-                            {% if form.name.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.name.errors|striptags }}
-                                </div>
-                            {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
-                            {{ form.content }}
-                            {% if form.content.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.content.errors|striptags }}
-                                </div>
-                            {% endif %}
-                        </div>
+                        <div id="editorjs" class="px-2"></div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <a href="{% url 'project_detail' project_id=project.id %}" class="btn btn-outline-secondary">Back to plans</a>
-                        </div>
+                        {{ form.content }}
                     </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Other plans -->
-        <div class="col-lg-3">
-            <div class="card">
-                <div class="card-header">
-                    <strong>Other Plans</strong>
-                </div>
-                <div class="card-body">
-                    {% if plans %}
-                        <div class="list-group">
-                            {% for p in plans %}
-                                <a class="list-group-item list-group-item-action {% if p.id == plan.id %}active{% endif %}"
-                                   href="{% url 'plan_detail' project_id=project.id plan_id=p.id %}">
-                                    {{ p.name }}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p class="text-muted mb-0">No plans yet.</p>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{{ plan.content|json_script:"plan-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1. Load Data
+        let initialData = {};
+        try {
+            initialData = JSON.parse(document.getElementById('plan-data').textContent);
+        } catch(e) {}
+
+        // 2. Init Editor
+        const editor = new EditorJS({
+            holder: 'editorjs',
+            placeholder: 'Type "/" for commands...',
+            data: (initialData && Object.keys(initialData).length) ? initialData : {},
+            tools: {
+                header: { class: Header, inlineToolbar: true },
+                list: { class: List, inlineToolbar: true },
+                checklist: { class: Checklist, inlineToolbar: true },
+                quote: { class: Quote, inlineToolbar: true },
+                marker: { class: Marker },
+            },
+            autofocus: false
+        });
+
+        // 3. Handle Save
+        const saveBtn = document.getElementById('saveBtn');
+        const form = document.getElementById('planForm');
+
+        saveBtn.addEventListener('click', async () => {
+            saveBtn.innerText = 'Saving...';
+            try {
+                const output = await editor.save();
+                document.getElementById('id_content').value = JSON.stringify(output);
+                form.submit();
+            } catch (error) {
+                console.error('Save failed', error);
+                alert('Save failed');
+                saveBtn.innerText = 'Save';
+            }
+        });
+
+        // 4. Enter Key in Title -> Jump to Editor
+        document.getElementById('id_name').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                editor.caret.setToFirstBlock();
+            }
+        });
+    });
+</script>
 {% endblock %}
